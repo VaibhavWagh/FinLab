@@ -1,222 +1,364 @@
 /**
- * Financial Management Application Type Definitions
- * Generated: 2026-01-12 15:57:39 UTC
+ * FinLab - Financial Data Type Definitions
+ * Comprehensive TypeScript types and interfaces for financial data modeling
  */
 
 /**
- * Represents a user account
+ * Account Interface
+ * Represents a user's financial account (checking, savings, investment, etc.)
  */
 export interface Account {
   id: string;
-  userId: string;
-  accountName: string;
-  accountType: 'savings' | 'checking' | 'investment' | 'retirement' | 'other';
+  name: string;
+  type: 'checking' | 'savings' | 'investment' | 'credit' | 'loan' | 'other';
   balance: number;
   currency: string;
+  institution: string;
+  accountNumber?: string;
   createdAt: Date;
   updatedAt: Date;
   isActive: boolean;
 }
 
 /**
- * Represents a financial transaction
+ * Transaction Interface
+ * Represents a single financial transaction
  */
 export interface Transaction {
   id: string;
   accountId: string;
   amount: number;
-  transactionType: 'income' | 'expense' | 'transfer';
+  type: 'income' | 'expense' | 'transfer' | 'investment' | 'withdrawal' | 'deposit';
   category: string;
   description: string;
   date: Date;
+  merchant?: string;
   tags: string[];
+  notes?: string;
   isRecurring: boolean;
-  recurringFrequency?: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  recurringFrequency?: 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'yearly';
   createdAt: Date;
   updatedAt: Date;
 }
 
 /**
- * Represents a loan
+ * Loan Interface
+ * Represents a loan account with repayment details
  */
 export interface Loan {
   id: string;
-  userId: string;
-  loanName: string;
-  loanType: 'personal' | 'mortgage' | 'auto' | 'student' | 'business' | 'other';
+  name: string;
+  lender: string;
   principalAmount: number;
   currentBalance: number;
   interestRate: number;
-  interestType: 'simple' | 'compound';
-  term: number;
-  termUnit: 'months' | 'years';
+  loanTerm: number; // in months
+  remainingTerm: number; // in months
+  monthlyPayment: number;
   startDate: Date;
   endDate: Date;
-  monthlyPayment: number;
-  totalInterestPaid: number;
-  status: 'active' | 'completed' | 'paused' | 'defaulted';
+  type: 'personal' | 'auto' | 'mortgage' | 'student' | 'business' | 'other';
+  status: 'active' | 'paid-off' | 'deferred' | 'default';
+  currency: string;
+  nextPaymentDate: Date;
+  lastPaymentDate?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
 
 /**
- * Represents a financial goal
+ * Goal Interface
+ * Represents a financial goal (savings target, investment goal, etc.)
  */
 export interface Goal {
   id: string;
-  userId: string;
-  goalName: string;
-  goalCategory: 'saving' | 'investment' | 'debt_payoff' | 'education' | 'retirement' | 'other';
+  name: string;
+  description?: string;
   targetAmount: number;
   currentAmount: number;
   currency: string;
+  category: 'savings' | 'investment' | 'debt-payoff' | 'education' | 'purchase' | 'retirement' | 'emergency' | 'other';
   targetDate: Date;
   priority: 'low' | 'medium' | 'high';
-  description: string;
-  status: 'active' | 'achieved' | 'cancelled' | 'paused';
-  progressPercentage: number;
+  status: 'not-started' | 'in-progress' | 'completed' | 'abandoned';
+  progress: number; // percentage 0-100
   createdAt: Date;
   updatedAt: Date;
 }
 
 /**
- * Represents aggregate financial data
+ * FinancialData Interface
+ * Main aggregated financial data structure
  */
 export interface FinancialData {
   userId: string;
+  accounts: Account[];
+  transactions: Transaction[];
+  loans: Loan[];
+  goals: Goal[];
   totalAssets: number;
   totalLiabilities: number;
   netWorth: number;
-  totalIncome: number;
-  totalExpenses: number;
-  savingsRate: number;
   currency: string;
-  accounts: Account[];
-  transactions: Transaction[];
-  loans: Loan[];
-  goals: Goal[];
-  periodStart: Date;
-  periodEnd: Date;
   lastUpdated: Date;
 }
 
 /**
- * Represents Key Performance Indicators for financial metrics
+ * KPIMetrics Interface
+ * Key Performance Indicators for financial analysis
  */
 export interface KPIMetrics {
   userId: string;
+  period: string; // e.g., "2024-Q1", "2026-01"
+  netWorth: number;
+  netWorthChange: number;
+  netWorthChangePercent: number;
+  totalIncome: number;
+  totalExpenses: number;
+  savingsRate: number; // percentage
   debtToIncomeRatio: number;
-  savingsRatio: number;
-  expenseRatio: number;
-  investmentRatio: number;
-  emergencyFundMonths: number;
-  netWorthGrowthRate: number;
-  averageTransactionAmount: number;
-  largestExpenseCategory: string;
-  largestExpenseAmount: number;
-  goalsOnTrack: number;
-  totalGoals: number;
-  goalCompletionRate: number;
-  periodStart: Date;
-  periodEnd: Date;
-  lastCalculated: Date;
+  debtToAssetRatio: number;
+  emergencyFundRatio: number; // months of expenses covered
+  investmentRatio: number; // percentage of net worth in investments
+  assetAllocation: {
+    cash: number;
+    investments: number;
+    realEstate: number;
+    other: number;
+  };
+  topExpenseCategories: {
+    category: string;
+    amount: number;
+    percentage: number;
+  }[];
+  topIncomeCategories: {
+    category: string;
+    amount: number;
+    percentage: number;
+  }[];
+  recurringMonthlyExpenses: number;
+  recurringMonthlyIncome: number;
+  calculatedAt: Date;
 }
 
 /**
- * Represents analytics data for financial insights
+ * AnalyticsData Interface
+ * Comprehensive analytics and insights derived from financial data
  */
 export interface AnalyticsData {
   userId: string;
-  spendingTrends: {
-    category: string;
-    amount: number;
-    percentageOfTotal: number;
-    trend: 'increasing' | 'decreasing' | 'stable';
-    monthOverMonthChange: number;
+  period: {
+    startDate: Date;
+    endDate: Date;
+  };
+  summary: {
+    totalTransactions: number;
+    averageTransactionAmount: number;
+    largestTransaction: number;
+    smallestTransaction: number;
+  };
+  trends: {
+    incomeGrowth: number; // percentage month-over-month
+    expenseGrowth: number; // percentage month-over-month
+    savingsGrowth: number; // percentage month-over-month
+  };
+  patterns: {
+    topSpendingCategories: string[];
+    topIncomeCategories: string[];
+    averageDaysToSpend: number; // average days to spend monthly income
+    seasonalTrends: {
+      month: string;
+      averageExpense: number;
+      averageIncome: number;
+    }[];
+  };
+  predictions: {
+    projectedMonthlyExpenses: number;
+    projectedMonthlyIncome: number;
+    projectedNetWorthInSixMonths: number;
+    projectedNetWorthInOneYear: number;
+    confidenceLevel: 'low' | 'medium' | 'high';
+  };
+  goalsProgress: {
+    goalId: string;
+    goalName: string;
+    currentProgress: number;
+    projectedCompletionDate: Date;
+    isOnTrack: boolean;
   }[];
-  incomeSourceBreakdown: {
-    source: string;
-    amount: number;
-    percentageOfTotal: number;
-  }[];
-  cashFlowProjection: {
-    month: string;
-    projectedIncome: number;
-    projectedExpenses: number;
-    projectedBalance: number;
-  }[];
-  accountPerformance: {
-    accountId: string;
-    accountName: string;
-    balance: number;
-    balanceChange: number;
-    balanceChangePercentage: number;
-  }[];
-  topTransactions: Transaction[];
-  anomalies: {
-    transactionId: string;
-    type: 'unusual_amount' | 'unusual_category' | 'unusual_timing';
-    severity: 'low' | 'medium' | 'high';
+  riskAssessment: {
+    liquidityRisk: 'low' | 'medium' | 'high';
+    debtRisk: 'low' | 'medium' | 'high';
+    concentrationRisk: 'low' | 'medium' | 'high';
+    overallRisk: 'low' | 'medium' | 'high';
+  };
+  recommendations: {
+    priority: number;
+    title: string;
     description: string;
+    type: 'savings' | 'investment' | 'debt-management' | 'budgeting' | 'general';
+    estimatedImpact: string;
   }[];
-  periodStart: Date;
-  periodEnd: Date;
-  lastAnalyzed: Date;
+  calculatedAt: Date;
 }
 
 /**
- * Represents the current state of the application store
+ * StoreState Interface
+ * Redux/State Management store state structure
  */
-export interface StoreStateCurrent {
-  userId: string;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  error: string | null;
-  
-  // Account data
-  accounts: Account[];
-  selectedAccountId: string | null;
-  
-  // Transaction data
-  transactions: Transaction[];
-  transactionFilter: {
-    accountId?: string;
-    category?: string;
-    startDate?: Date;
-    endDate?: Date;
-    transactionType?: Transaction['transactionType'];
+export interface StoreState {
+  // User Authentication
+  auth: {
+    isAuthenticated: boolean;
+    userId?: string;
+    username?: string;
+    email?: string;
+    token?: string;
+    loading: boolean;
+    error?: string;
   };
-  
-  // Loan data
-  loans: Loan[];
-  selectedLoanId: string | null;
-  
-  // Goal data
-  goals: Goal[];
-  selectedGoalId: string | null;
-  
-  // Analytics and metrics
-  financialData: FinancialData | null;
-  kpiMetrics: KPIMetrics | null;
-  analyticsData: AnalyticsData | null;
-  
-  // UI state
-  theme: 'light' | 'dark';
-  sidebarOpen: boolean;
-  notifications: {
-    id: string;
-    type: 'success' | 'error' | 'warning' | 'info';
-    message: string;
-    timestamp: Date;
-  }[];
-  
-  // Pagination and display
-  itemsPerPage: number;
-  currentPage: number;
-  
-  // Last sync information
-  lastSyncTime: Date | null;
-  
-  // Timestamp
-  lastUpdated: Date;
+
+  // Financial Data
+  financial: {
+    data: FinancialData | null;
+    accounts: Account[];
+    transactions: Transaction[];
+    loans: Loan[];
+    goals: Goal[];
+    loading: boolean;
+    error?: string;
+    lastSyncTime?: Date;
+  };
+
+  // Analytics
+  analytics: {
+    kpiMetrics: KPIMetrics | null;
+    analyticsData: AnalyticsData | null;
+    selectedPeriod: string;
+    loading: boolean;
+    error?: string;
+    cachedData: {
+      [key: string]: {
+        data: KPIMetrics | AnalyticsData;
+        timestamp: Date;
+      };
+    };
+  };
+
+  // UI State
+  ui: {
+    sidebarOpen: boolean;
+    theme: 'light' | 'dark';
+    currency: string;
+    language: string;
+    notifications: {
+      id: string;
+      message: string;
+      type: 'success' | 'error' | 'warning' | 'info';
+      timestamp: Date;
+    }[];
+    currentPage: string;
+    filters: {
+      [key: string]: any;
+    };
+  };
+
+  // Filters and Preferences
+  preferences: {
+    dateRange: {
+      startDate: Date;
+      endDate: Date;
+    };
+    transactionFilters: {
+      accountIds: string[];
+      types: string[];
+      categories: string[];
+      dateRange?: {
+        startDate: Date;
+        endDate: Date;
+      };
+    };
+    accountFilters: {
+      types: string[];
+      isActive: boolean;
+    };
+    displayOptions: {
+      showArchived: boolean;
+      itemsPerPage: number;
+      sortBy: string;
+      sortOrder: 'asc' | 'desc';
+    };
+  };
+
+  // Cache
+  cache: {
+    [key: string]: {
+      data: any;
+      timestamp: Date;
+      ttl: number; // time to live in milliseconds
+    };
+  };
+
+  // Loading and Error States
+  common: {
+    isLoading: boolean;
+    error?: string;
+    successMessage?: string;
+  };
 }
+
+/**
+ * Request/Response Envelopes for API Communication
+ */
+export interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: {
+    code: string;
+    message: string;
+    details?: any;
+  };
+  meta?: {
+    timestamp: Date;
+    version: string;
+  };
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+/**
+ * Filter and Query Types
+ */
+export interface TransactionFilterParams {
+  accountIds?: string[];
+  types?: Transaction['type'][];
+  categories?: string[];
+  startDate?: Date;
+  endDate?: Date;
+  minAmount?: number;
+  maxAmount?: number;
+  search?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface DateRange {
+  startDate: Date;
+  endDate: Date;
+}
+
+/**
+ * Utility Types
+ */
+export type CurrencyCode = 'USD' | 'EUR' | 'GBP' | 'INR' | 'JPY' | string;
+export type TransactionType = Transaction['type'];
+export type AccountType = Account['type'];
+export type LoanType = Loan['type'];
+export type GoalCategory = Goal['category'];
+export type GoalPriority = Goal['priority'];
